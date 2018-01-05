@@ -6,11 +6,16 @@ import java.awt.List;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
+import java.util.Set;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
@@ -100,6 +105,8 @@ public class TP3 {
 		}
 		bw.close();
 		
+		ajoutColonneSize(new File(filename));
+		
 		BufferedReader br = new BufferedReader(new FileReader(f));
 		String line;
 		 
@@ -109,6 +116,44 @@ public class TP3 {
 		br.close();
 	}
 	
+	public void ajoutColonneSize( File csvFile ) throws Exception {
+		BufferedReader br = new BufferedReader(new FileReader(csvFile));
+		String line;
+		
+		int indexLigne = 0;
+		Map<String,Long> id = new LinkedHashMap();
+		while ((line = br.readLine()) != null) {
+			
+			Long tailleVariante = 0L;
+			int indexColonne = 0;
+			for (String str : line.split(";")) {
+				if (indexLigne == 0) {
+					//lecture des id
+					//alimente la map avec id/taille
+					if (str != "") {
+						Long value = 0L;
+						File f = new File(str);
+						if (f.exists()) value = f.length();
+						id.put(str, new Long(value));
+					}
+				}
+				else {
+					if( str.equals("TRUE") ) {
+						Object[] keys = id.keySet().toArray();
+						System.out.println("index colonne : " + keys[indexColonne]);
+						tailleVariante += id.get( keys[indexColonne] );
+						
+						//Attention on gere des id et non des nom de fichier !!!!!
+					}
+				}
+				indexColonne += 1;
+				System.out.println( "variante " + indexLigne + " : " + tailleVariante + "\n");
+			}
+			System.out.println(line);
+			indexLigne += 1;
+		}
+		br.close();
+	}
 	
 	public String[] addMandatory( String[] tab ) {
 		String[] tabRetour = new String[tab.length];

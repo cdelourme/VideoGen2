@@ -172,7 +172,7 @@ public class TP2 {
 	}
 	
 	
-	@Ignore
+	@Test
 	public void testDurationVideo() throws IOException, InterruptedException {
 		
 		float nb = getVideoDuration("video/v1.mp4");

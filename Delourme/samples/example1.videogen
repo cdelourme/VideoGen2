@@ -1,11 +1,10 @@
 VideoGen {
-	mandatory videoseq v0 "video/v0.mp4"
-	mandatory videoseq v01 "video/v01.mp4"
+	mandatory videoseq v0 "video/v100.avi"
+	mandatory videoseq v01 "video/v101.avi"
 	alternatives v1 {
-		videoseq v11 "video/v11.mp4"
-		videoseq v12 "video/v12.mp4"
-		videoseq v13 "video/v13.mp4"
+		videoseq v11 "video/v106.avi"
+		videoseq v12 "video/v107.avi"
+		videoseq v13 "video/v108.avi"
 	}
-	mandatory image i1 "image/01.jpeg"
-	optional videoseq v2 "video/v2.mp4"
+	optional videoseq v2 "video/v102.avi"
 }

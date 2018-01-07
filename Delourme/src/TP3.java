@@ -2,13 +2,15 @@ import static org.junit.Assert.*;
 
 
 
-import java.awt.List;
+import java.util.List;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -17,8 +19,10 @@ import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.xtext.example.mydsl.videoGen.AlternativesMedia;
 import org.xtext.example.mydsl.videoGen.ImageDescription;
@@ -29,131 +33,11 @@ import org.xtext.example.mydsl.videoGen.OptionalMedia;
 import org.xtext.example.mydsl.videoGen.VideoDescription;
 import org.xtext.example.mydsl.videoGen.VideoGeneratorModel;
 
+import com.google.common.io.Files;
+
 public class TP3 {
 
 	String filename = "csv-file.csv";
-	@Test
-	public void generationCSVFile() throws Exception {
-		
-		String listeId = "";
-		String[] listeCycle = new String[1];
-		
-		
-		VideoGeneratorModel videoGen = new VideoGenHelper().loadVideoGenerator(URI.createURI("samples/example1.videogen"));
-		assertNotNull(videoGen);
-		
-		for (Media m : videoGen.getMedias()) {
-			
-			if (m instanceof MandatoryMedia){
-				MandatoryMedia mand = (MandatoryMedia)m;
-				MediaDescription md = mand.getDescription();
-				if(md instanceof ImageDescription) {
-					ImageDescription img = (ImageDescription)md;
-					System.out.println("Mandatory image : " + img.getImageid());
-					listeId += ";" + img.getImageid();
-					listeCycle = addMandatory( listeCycle );
-
-				}else if(md instanceof VideoDescription) {
-					VideoDescription video = (VideoDescription)md;
-					System.out.println("Mandatory video : " + video.getVideoid());
-					listeId += ";" + video.getVideoid();
-					listeCycle = addMandatory( listeCycle );
-				}
-			}else if (m instanceof OptionalMedia){
-				OptionalMedia option = (OptionalMedia)m;
-
-				MediaDescription md = option.getDescription();
-				if(md instanceof ImageDescription) {
-					ImageDescription img = (ImageDescription)md;
-					System.out.println("Optional image : " + img.getImageid());
-					listeId += ";" + img.getLocation();
-					listeCycle = addOptionnal( listeCycle );
-					
-				}else if(md instanceof VideoDescription) {
-					VideoDescription video = (VideoDescription)md;
-					System.out.println("Optional video : " +video.getVideoid());
-					listeId += ";" + video.getVideoid();
-					listeCycle = addOptionnal( listeCycle );
-				}
-			}else if (m instanceof AlternativesMedia){
-				AlternativesMedia alter = (AlternativesMedia)m;
-				EList<MediaDescription> liste = alter.getMedias();
-				for( MediaDescription md : liste ) {
-					if(md instanceof ImageDescription) {
-						ImageDescription img = (ImageDescription)md;
-						System.out.println("Alternatives image : " + img.getImageid());
-						listeId += ";" + img.getImageid();
-						
-					}else if(md instanceof VideoDescription) {
-						VideoDescription video = (VideoDescription)md;
-						System.out.println("Alternatives video : " +video.getVideoid());
-						listeId += ";" + video.getVideoid();
-					}
-				}
-				listeCycle = addAlternatives( listeCycle , liste.size());
-			}
-		}
-		
-				
-		File f = new File(filename);
-		BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-		bw.write(listeId + "\n");
-		int index = 1;
-		for (String s : listeCycle) {
-			bw.write(index + s + "\n");
-			index++;
-		}
-		bw.close();
-		
-		ajoutColonneSize(new File(filename));
-		
-		BufferedReader br = new BufferedReader(new FileReader(f));
-		String line;
-		 
-		while ((line = br.readLine()) != null) {
-			System.out.println(line);
-		}
-		br.close();
-	}
-	
-	public void ajoutColonneSize( File csvFile ) throws Exception {
-		BufferedReader br = new BufferedReader(new FileReader(csvFile));
-		String line;
-		
-		int indexLigne = 0;
-		Map<String,Long> id = new LinkedHashMap();
-		while ((line = br.readLine()) != null) {
-			
-			Long tailleVariante = 0L;
-			int indexColonne = 0;
-			for (String str : line.split(";")) {
-				if (indexLigne == 0) {
-					//lecture des id
-					//alimente la map avec id/taille
-					if (str != "") {
-						Long value = 0L;
-						File f = new File(str);
-						if (f.exists()) value = f.length();
-						id.put(str, new Long(value));
-					}
-				}
-				else {
-					if( str.equals("TRUE") ) {
-						Object[] keys = id.keySet().toArray();
-						System.out.println("index colonne : " + keys[indexColonne]);
-						tailleVariante += id.get( keys[indexColonne] );
-						
-						//Attention on gere des id et non des nom de fichier !!!!!
-					}
-				}
-				indexColonne += 1;
-				System.out.println( "variante " + indexLigne + " : " + tailleVariante + "\n");
-			}
-			System.out.println(line);
-			indexLigne += 1;
-		}
-		br.close();
-	}
 	
 	public String[] addMandatory( String[] tab ) {
 		String[] tabRetour = new String[tab.length];
@@ -201,4 +85,149 @@ public class TP3 {
 		return tabRetour;
 	}
 	
+	public Long getFileSize(String filename) {
+		File f = new File(filename);
+		Long value = 0L;
+		if (f.exists()) value = f.length();
+		return value;
+	}
+	
+	@Test
+	public void generationCSVFile() throws Exception {
+		
+		String listeId = "";
+		String[] listeCycle = new String[1];
+		Map<String,String> listLocation = new LinkedHashMap<String,String>();
+		
+		VideoGeneratorModel videoGen = new VideoGenHelper().loadVideoGenerator(URI.createURI("samples/example1.videogen"));
+		assertNotNull(videoGen);
+		
+		for (Media m : videoGen.getMedias()) {
+			
+			if (m instanceof MandatoryMedia){
+				MandatoryMedia mand = (MandatoryMedia)m;
+				MediaDescription md = mand.getDescription();
+				
+				if(md instanceof ImageDescription) {
+					ImageDescription img = (ImageDescription)md;
+					System.out.println("Mandatory image : " + img.getImageid());
+					listeId += ";" + img.getImageid();
+					listeCycle = addMandatory( listeCycle );
+					listLocation.put( img.getImageid(),img.getLocation());
+
+				}else if(md instanceof VideoDescription) {
+					VideoDescription video = (VideoDescription)md;
+					System.out.println("Mandatory video : " + video.getVideoid());
+					listeId += ";" + video.getVideoid();
+					listeCycle = addMandatory( listeCycle );
+					listLocation.put( video.getVideoid(),video.getLocation());
+				}
+			}else if (m instanceof OptionalMedia){
+				OptionalMedia option = (OptionalMedia)m;
+
+				MediaDescription md = option.getDescription();
+				if(md instanceof ImageDescription) {
+					ImageDescription img = (ImageDescription)md;
+					System.out.println("Optional image : " + img.getImageid());
+					listeId += ";" + img.getLocation();
+					listeCycle = addOptionnal( listeCycle );
+					listLocation.put( img.getImageid(),img.getLocation());
+					
+				}else if(md instanceof VideoDescription) {
+					VideoDescription video = (VideoDescription)md;
+					System.out.println("Optional video : " +video.getVideoid());
+					listeId += ";" + video.getVideoid();
+					listeCycle = addOptionnal( listeCycle );
+					listLocation.put( video.getVideoid(),video.getLocation());
+				}
+			}else if (m instanceof AlternativesMedia){
+				AlternativesMedia alter = (AlternativesMedia)m;
+				EList<MediaDescription> liste = alter.getMedias();
+				for( MediaDescription md : liste ) {
+					if(md instanceof ImageDescription) {
+						ImageDescription img = (ImageDescription)md;
+						System.out.println("Alternatives image : " + img.getImageid());
+						listeId += ";" + img.getImageid();
+						listLocation.put( img.getImageid(),img.getLocation());
+						
+					}else if(md instanceof VideoDescription) {
+						VideoDescription video = (VideoDescription)md;
+						System.out.println("Alternatives video : " +video.getVideoid());
+						listeId += ";" + video.getVideoid();
+						listLocation.put( video.getVideoid(),video.getLocation());
+					}
+				}
+				listeCycle = addAlternatives( listeCycle , liste.size());
+			}
+		}
+		
+				
+		File f = new File(filename);
+		BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+		bw.write(listeId + ";size;realsize \n");
+		int index = 1;
+		
+		String output = "video/output.avi";
+		String outputGIF = "video/output.gif";
+		
+		for (String line : listeCycle) {
+			Long cumulSize = 0L;
+			Long realSize = 0L;
+			Long gifSize = 0L;
+			int indexColonne = -1;
+			
+			// liste de media à concatener 
+			List<String> medias = new ArrayList<String>();
+			
+			for (String str : line.split(";")) {
+				if (str.equals("TRUE")) {
+					//size
+					Object[] keys = listLocation.keySet().toArray();
+					String location = listLocation.get( keys[indexColonne] );
+					cumulSize += getFileSize(location);
+					//realsize
+					medias.add(location);
+				}
+				indexColonne++;
+			}
+			concatenerMedia(medias, output);
+			realSize = getFileSize(output);
+			
+			//convertMediaToGIF( output , outputGIF );
+			//gifSize = getFileSize(outputGIF);
+			
+			bw.write(index + line + ";" + cumulSize +";"+ realSize /*+";"+ gifSize */+"\n");
+			index++;
+		}
+		bw.close();
+		
+		BufferedReader br = new BufferedReader(new FileReader(f));
+		String line;
+		 
+		while ((line = br.readLine()) != null) {
+			System.out.println(line);
+		}
+		br.close();
+	}
+	
+	
+	public void convertMediaToGIF(String m1, String output) throws IOException, InterruptedException {
+		
+		Runtime run = Runtime.getRuntime();
+		Process p = run.exec("ffmpeg -i "+ m1 +" " + output );
+		p.waitFor();
+	}
+	
+	public void concatenerMedia(List<String> listeMedia , String output) throws IOException, InterruptedException {
+		
+		Runtime run = Runtime.getRuntime();
+		
+		BufferedWriter bw = new BufferedWriter(new FileWriter("maList.txt"));
+		for (String path:listeMedia) {
+			bw.write("file \'" + path  + "\'\n");
+		}
+		bw.close();
+		Process p = run.exec("ffmpeg -y -f concat -i maList.txt -c copy " + output);
+		p.waitFor();
+	}
 }

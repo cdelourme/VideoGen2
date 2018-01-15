@@ -19,8 +19,9 @@ public class Serveur {
 		return "{\"output\": \"" + VideoGenerator.generateVideo(videoGen) + "\"}";
 	}
 	
-	@RequestMapping(value="/custom", produces={"application/json"})
+	@RequestMapping("/custom")
 	public @ResponseBody List<ShortMedia>  getListeVideo() {
+		System.out.println("GetImages()");
 		VideoGeneratorModel videoGen = VideoGenerator.getVideoGeneratorModel();
 		List<ShortMedia> liste = null;
 		

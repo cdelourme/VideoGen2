@@ -4,7 +4,7 @@ Service pour manipuler les videos.
 
 videogenApp.factory('videoFactory', function( $http, $rootScope ){
 	var factory = {};
-	// Retourne toutes les personnes
+	// Retourne une video generee automatiquement
 	factory.generate = function() {
 		$rootScope.generatedVideo='';
 				return $http({
@@ -18,6 +18,21 @@ videogenApp.factory('videoFactory', function( $http, $rootScope ){
 				}, function errorCallback(response) {
 				})
 		  };
-
+	// Retourne toutes les images pour composer la video
+	factory.getThumbnail = function() {
+		$rootScope.media=[];
+		console.log("methode getThumbnail factory");
+				return $http({
+					method: 'GET',
+					url: 'http://localhost:9200/custom'
+				}).then(function successCallback(response) {
+						console.log(response.data);
+						$rootScope.media = response.data;
+						//console.log(typeof $rootScope.generatedVideo);
+						console.log("methode retour data factory");
+				}, function errorCallback(response) {
+					console.log("error");
+				})
+		  };
 	return factory;
 });

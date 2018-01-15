@@ -53,5 +53,29 @@ public class ShortMedia implements Serializable{
 			}
 		}
 	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public List<String> getVideolocation() {
+		return videolocation;
+	}
+
+	public void setVideolocation(List<String> videolocation) {
+		this.videolocation = videolocation;
+	}
+
+	public List<String> getThumbnailLocation() {
+		return thumbnailLocation;
+	}
+
+	public void setThumbnailLocation(List<String> thumbnailLocation) {
+		this.thumbnailLocation = thumbnailLocation;
+	}
 	
 }

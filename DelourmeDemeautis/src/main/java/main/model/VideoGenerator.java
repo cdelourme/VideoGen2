@@ -41,7 +41,7 @@ public class VideoGenerator {
 		String output = "output"+new Random().nextInt(9999)+".mp4";
 		try {
 			VideoGenerator videoG = new VideoGenerator();
-			videoG.generation(videoGen,"src/main/webapp/public/" + output);
+			videoG.generation(videoGen,"src/main/webapp/public/video/" + output);
 		}catch (Exception e) {
 			System.err.println("Erreur Generation Video " + e.getMessage());
 		}

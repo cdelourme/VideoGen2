@@ -1,10 +1,26 @@
 VideoGen {
-	mandatory videoseq v0 "video/v100a.mp4"
-	mandatory videoseq v01 "video/v101a.mp4"
-	alternatives v1 {
-		videoseq v11 "video/v106a.mp4"
-		videoseq v12 "video/v107a.mp4"
-		videoseq v13 "video/v109a.mp4"
+	alternatives v2 {
+		videoseq v08 "video/v108c.mp4"
+		videoseq v09 "video/v109c.mp4"
 	}
-	optional videoseq v2 "video/v102a.mp4"
+	mandatory videoseq v0 "video/v100c.mp4"
+	alternatives v1 {
+		videoseq v04 "video/v104c.mp4"
+		videoseq v05 "video/v105c.mp4"
+		videoseq v06 "video/v106c.mp4"
+		videoseq v07 "video/v107c.mp4"
+	}
+	alternatives v4 {
+		videoseq v10 "video/v110c.mp4"
+		videoseq v11 "video/v111c.mp4"
+		videoseq v12 "video/v112c.mp4"
+		videoseq v13 "video/v113c.mp4"
+		videoseq v14 "video/v114c.mp4"
+		videoseq v15 "video/v115c.mp4"
+		videoseq v16 "video/v116c.mp4"
+	}
+
+	mandatory videoseq v3 "video/v101c.mp4"
+	optional videoseq v5 "video/v102c.mp4"
+	
 }

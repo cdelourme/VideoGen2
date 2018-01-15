@@ -1,0 +1,15 @@
+<div>
+<h2> Video project _ IDM TP VideoGen2 </h2>
+<h3>Click on "Generate" to have a new funny video.</h3>
+
+
+<!--<video width="320" height="240" controls>
+ <source src="localhost:9200/video/v100b.ogg" type="video/ogg">
+Your browser does not support the video tag.
+</video>-->
+
+<a ng-click="generate()" class="btn btn-danger btn-xs pull-left">Generate</a>
+<br><br>
+
+<a href="public/{{generatedVideo.output}}" {{generatedVideo.output}} target="_blank">VIDEO : {{generatedVideo.output}}</a>
+</div>

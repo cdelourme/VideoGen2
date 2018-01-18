@@ -1,6 +1,17 @@
 <h2>Nice, we can customize our video !!</h2>
 
 <div id='ihm'ng-init="generateIHM()">
-  <p>Wait few seconds, please.</p>
-</div>
 <a ng-click="generate()" class="btn btn-danger btn-xs pull-left">Generate</a>
+<a href="public/video/{{generatedVOD.output}}" {{generatedVOD.output}} target="_blank">Your video : -> {{generatedVOD.output}} <- </a>
+<br>
+<br>
+  <table class="table table-striped">
+    <tbody ng-repeat="m in medias">
+        <tr><td class="noBorder">{{getTexte(m.type)}}</td>
+        <td ng-repeat="elt in m.elements" class="noBorder">
+          <label><table><tr><img ng-src="public/{{elt.thumbnailLocation}}" height=120 width=120 /></tr>
+                        <tr><input type="checkbox" ng-click="addVideo( elt.videolocation )" ></tr></table></label>
+        </tr>
+    </body>
+  </table>
+</div>

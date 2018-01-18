@@ -1,77 +1,59 @@
-
+/*
+*		Controller for Page1
+*/
 videogenApp.controller('mainCtrl', function($rootScope,$scope,$http,$routeParams,videoFactory){
 
+	// Ask for new random video
 	$scope.generate = function(){
 		videoFactory.generate();
 	}
-	$scope.change = function(){
-		console.log("change");
-	}
+
 })
 
+
+/*
+*		Controller for Page2
+*/
 videogenApp.controller('customCtrl', function($rootScope,$scope,$http,$routeParams,videoFactory){
 
-	$scope.listeVideo = [];
+	$rootScope.videos = [];					// list of videos from checked pictures
+	$rootScope.generatedVOD = "";		// link to the generated VOD
 
+	// Ask for a new VOD
 	$scope.generate = function(){
-		console.log($scope.listeVideo );
-		//videoFactory.generate();
+		videoFactory.generateVOD();
 	}
 
+	//Fill the table with all pictures and texts
+	//Promise is for waiting the end of the factory method.
 	$scope.generateIHM = function(){
 		videoFactory.getThumbnail().then(function() {
-  		console.log();
-			$scope.refresh();
+			$rootScope.generatedVOD = "";
 			});
 	}
-	$scope.addVideo = function(value1, value2){
-		console.log(value1);
-		console.log(value2);
-	}
 
-	// on affiche toutes les videos pour un média donné
-	$scope.addLigne = function( media, i ){
-		maDiv = document.createElement("div");
-		maDiv.id = 'media_i';
-		document.getElementById('ihm').appendChild(maDiv);
-
-		var taille2 = media.videolocation.length;
-		for (var j = 0; j < taille2; j++) {
-			//cmd="<img ng-click=\"addVideo("+media.videolocation[j]+","+i+")\" src=\"public/"+ media.thumbnailLocation[j] +"\" height=120 width=120 />"
-			img = "<img ng-click=\"addVideo("+media.videolocation[j]+","+i+")\" src=\"public/"+ media.thumbnailLocation[j] +"\" height=120 width=120 />"
-			cmd = "<label><input type=\"checkbox\" checklist-model=\"listeVideo\" value=\""+media.videolocation[j]+"\"> "+img+"</label>";
-console.log(cmd);
-			maDiv.innerHTML += cmd;
+	// We add videos in the list. If the video is already present, we delete it.
+	$scope.addVideo = function( texte ){
+	 	var index = $rootScope.videos.indexOf(texte);
+		if (index >= 0) {
+			$rootScope.videos.splice(index, 1);
 		}
-		document.getElementById('ihm').appendChild(maDiv);
-		document.getElementById('ihm').appendChild(document.createElement("br"));
-	}
-
-	// ajoute une ligne de texte à la page
-	$scope.addTexte = function( texte ){
-		monTexte = document.createElement("p");
-		monTexte.innerHTML = texte;
-		document.getElementById('ihm').appendChild(monTexte);
-		document.getElementById('ihm').appendChild(document.createElement("br"));
-	}
-
-	// lance l'affichage des images suivant le type de média
-	$scope.refresh = function(){
-		$scope.listeVideo.splice(0, 20);
-
-		document.getElementById('ihm').innerHTML="";
-		var taille = $rootScope.media.length;
-		for (var i = 0; i < taille; i++) {
-		  var media = $rootScope.media[i];
-
-			if (media.type == "org.xtext.example.mydsl.videoGen.impl.AlternativesMediaImpl"){
-				$scope.addTexte("il nous en faut une :)");
-			}else if (media.type == "org.xtext.example.mydsl.videoGen.impl.MandatoryMediaImpl"){
-				$scope.addTexte("Celle ci est obligatoire :)");
-			}else if (media.type == "org.xtext.example.mydsl.videoGen.impl.OptionalMediaImpl"){
-				$scope.addTexte("Seulement si vous le souhaitez :)");
-			}
-			$scope.addLigne(media, i);
+		else {
+			$rootScope.videos.push(texte);
 		}
+	};
+
+	// convert the classname to a simple text.
+	$scope.getTexte = function( texte ){
+		var retour = "";
+		if (texte == "org.xtext.example.mydsl.videoGen.impl.AlternativesMediaImpl"){
+			retour = "il nous en faut une :)";
+		}else if (texte == "org.xtext.example.mydsl.videoGen.impl.MandatoryMediaImpl"){
+			retour = "Celle ci est obligatoire :)";
+		}else if (texte == "org.xtext.example.mydsl.videoGen.impl.OptionalMediaImpl"){
+			retour = "Seulement si vous le souhaitez :)";
+		}
+		return retour;
 	}
+
 })

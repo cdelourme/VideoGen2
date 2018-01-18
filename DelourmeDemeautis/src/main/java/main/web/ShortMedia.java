@@ -21,12 +21,11 @@ public class ShortMedia implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	String type ;
-	List<String> videolocation;
-	List<String> thumbnailLocation;
+	List<Element> elements;
+
 	
 	public ShortMedia( Media m1) throws Exception {
-		videolocation = new ArrayList<String>();
-		thumbnailLocation = new ArrayList<String>();
+		elements = new ArrayList<Element>();
 		type = "";
 		
 		if (m1 != null) {
@@ -34,21 +33,19 @@ public class ShortMedia implements Serializable{
 			if (m1 instanceof MandatoryMedia){
 				MandatoryMedia mand = (MandatoryMedia)m1;
 				MediaDescription md = mand.getDescription();
-				videolocation.add( md.getLocation());
-				thumbnailLocation.add(VideoTools.videoToImage(md.getLocation()));
+				elements.add(new Element(md.getLocation() , VideoTools.videoToImage(md.getLocation())));
+
 				
 			}else if (m1 instanceof OptionalMedia){
 				OptionalMedia option = (OptionalMedia)m1;
 				MediaDescription md = option.getDescription();
-				videolocation.add( md.getLocation());
-				thumbnailLocation.add(VideoTools.videoToImage(md.getLocation()));
+				elements.add(new Element(md.getLocation() , VideoTools.videoToImage(md.getLocation())));
 				
 			}else if (m1 instanceof AlternativesMedia){
 				AlternativesMedia alter = (AlternativesMedia)m1;
 				EList<MediaDescription> liste = alter.getMedias();
-				for(MediaDescription m:liste) {
-					videolocation.add(m.getLocation());
-					thumbnailLocation.add(VideoTools.videoToImage(m.getLocation()));
+				for(MediaDescription md:liste) {
+					elements.add(new Element(md.getLocation() , VideoTools.videoToImage(md.getLocation())));
 				}
 			}
 		}
@@ -62,20 +59,13 @@ public class ShortMedia implements Serializable{
 		this.type = type;
 	}
 
-	public List<String> getVideolocation() {
-		return videolocation;
+	public List<Element> getElements() {
+		return elements;
 	}
 
-	public void setVideolocation(List<String> videolocation) {
-		this.videolocation = videolocation;
+	public void setElements(List<Element> elements) {
+		this.elements = elements;
 	}
 
-	public List<String> getThumbnailLocation() {
-		return thumbnailLocation;
-	}
-
-	public void setThumbnailLocation(List<String> thumbnailLocation) {
-		this.thumbnailLocation = thumbnailLocation;
-	}
 	
 }

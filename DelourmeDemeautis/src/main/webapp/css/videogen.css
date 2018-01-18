@@ -5,11 +5,15 @@
       border-radius: 0;
     }
 
-    /* on ajoute un espace à droite des images + forme ronde */
+    /* Pictures are in a circle, just for fun */
     img {
-      margin-right: 10px;
-      margin-bottom: 10px;
+      margin-right: 0px;
+      margin-bottom: 0px;
       border-radius: 50%;
+    }
+    /* No border for the table */
+    .noBorder {
+        border:none !important;
     }
 
     /* Set height of the grid so .sidenav can be 100% (adjust as needed) */

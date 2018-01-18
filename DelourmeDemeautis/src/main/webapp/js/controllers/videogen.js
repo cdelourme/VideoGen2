@@ -1,20 +1,18 @@
-//'use strict';
-
 /**
- * Déclaration de l'application routeApp
+ *  routeApp application
  */
 var videogenApp = angular.module('videogenApp', [
-    // Dépendances du "module"
+    // Dépendancies
     'ngRoute',
     'ngResource'
 ]);
 
 /**
- * Configuration des routes
+ *  Route systeme manager
  */
 videogenApp.config(['$routeProvider',
     function($routeProvider) {
-        // Système de routage
+
         $routeProvider.when('/page1', { templateUrl: 'views/page1.html', controller: 'mainCtrl'});
         $routeProvider.when('/page2', { templateUrl: 'views/page2.html', controller: 'customCtrl'});
 

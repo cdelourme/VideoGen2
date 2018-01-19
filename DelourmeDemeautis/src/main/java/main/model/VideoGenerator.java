@@ -1,29 +1,16 @@
 package main.model;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.xtext.example.mydsl.videoGen.AlternativesMedia;
-import org.xtext.example.mydsl.videoGen.ImageDescription;
 import org.xtext.example.mydsl.videoGen.MandatoryMedia;
 import org.xtext.example.mydsl.videoGen.Media;
 import org.xtext.example.mydsl.videoGen.MediaDescription;
 import org.xtext.example.mydsl.videoGen.OptionalMedia;
-import org.xtext.example.mydsl.videoGen.VideoDescription;
 import org.xtext.example.mydsl.videoGen.VideoGeneratorModel;
 
 import main.web.ShortMedia;
@@ -36,7 +23,7 @@ public class VideoGenerator {
 		return modelVideoGen;
 	}
 	
-	
+
 	public static String generateVideo(VideoGeneratorModel videoGen) {
 		String output = "output"+new Random().nextInt(9999)+".mp4";
 		try {
@@ -49,6 +36,10 @@ public class VideoGenerator {
 		return output;
 	}
 	
+	
+	/*
+	 *  Generate a random video from a specific videogen file
+	 */
 	public void generation(VideoGeneratorModel videoGen, String output) throws Exception {
 		
 		List<String> listLocation = new ArrayList<String>();
@@ -79,6 +70,9 @@ public class VideoGenerator {
 
 	}
 	
+	/*
+	 *  Export a videogen file for the web interface
+	 */
 	public static List<ShortMedia> getListeVideo(VideoGeneratorModel videoGen) throws Exception {
 		
 		List<ShortMedia> listMedia = new ArrayList<ShortMedia>();
@@ -90,7 +84,7 @@ public class VideoGenerator {
 	}
 
 	/*
-	 * Génère un nombre aléatoire parmi x possibilités
+	 *  Generate a random number like new Random().nextInt(9999)
 	 */
 	public int getRandomInt(int nbPossibilities) {
 		

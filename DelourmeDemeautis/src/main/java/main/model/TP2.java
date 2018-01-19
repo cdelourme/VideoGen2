@@ -142,6 +142,7 @@ public class TP2 {
 		return newImage;
 	}
 	
+
 	@Ignore
 	public void lireVideoSequentiel() throws Exception {
 		
@@ -177,14 +178,14 @@ public class TP2 {
 	@Test
 	public void testDurationVideo() throws IOException, InterruptedException {
 		
-		float nb = getVideoDuration("video/v100a.mp4");
+		float nb = getVideoDuration("video/v100c.mp4");
 		assertTrue(nb > 0);
 	}
 	
-	@Ignore
+	@Test
 	public void testVideoToImage() throws IOException, InterruptedException {
 		
-		String img = videoToImage("video/v1.mp4");
+		String img = videoToImage("video/v100c.mp4");
 		System.out.println( "Image generee : " + img );
 		assertFalse(img == "");
 	}
@@ -200,7 +201,7 @@ public class TP2 {
 		
 	}
 	
-	@Ignore
+	@Test
 	public void testRechercheDureelaPlusLongue() throws IOException, InterruptedException {
 		
 		VideoGeneratorModel videoGen = new VideoGenHelper().loadVideoGenerator(URI.createURI("samples/example1.videogen"));

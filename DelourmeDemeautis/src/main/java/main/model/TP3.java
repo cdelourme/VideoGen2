@@ -100,7 +100,7 @@ public class TP3 {
 		String[] listeCycle = new String[1];
 		Map<String,String> listLocation = new LinkedHashMap<String,String>();
 		
-		VideoGeneratorModel videoGen = new VideoGenHelper().loadVideoGenerator(URI.createURI("samples/example1.videogen"));
+		VideoGeneratorModel videoGen = new VideoGenHelper().loadVideoGenerator(URI.createURI("samples/etude.videogen"));
 		assertNotNull(videoGen);
 		
 		for (Media m : videoGen.getMedias()) {
@@ -170,12 +170,14 @@ public class TP3 {
 		
 		String output = "video/output.mp4";
 		String outputGIF = "video/output.gif";
+
 		
 		for (String line : listeCycle) {
 			Long cumulSize = 0L;
 			Long realSize = 0L;
 			Long gifSize = 0L;
 			int indexColonne = -1;
+			List<String> concatLocation = new ArrayList<String>();
 			
 			// liste de media à concatener 
 			List<String> medias = new ArrayList<String>();
@@ -185,16 +187,17 @@ public class TP3 {
 					//size
 					Object[] keys = listLocation.keySet().toArray();
 					String location = listLocation.get( keys[indexColonne] );
+					concatLocation.add(location);
 					cumulSize += getFileSize(location);
 					//realsize
 					medias.add(location);
 				}
 				indexColonne++;
 			}
-			concatenerMedia(medias, output);
+			VideoTools.concatenerMedia(concatLocation, output);
 			realSize = getFileSize(output);
 			
-			convertMediaToGIF( output , outputGIF ,15, "640x480");
+			VideoTools.convertMediaToGIF( output , outputGIF ,15, "640x480");
 			gifSize = getFileSize(outputGIF);
 			
 			bw.write(index + line + ";" + cumulSize +";"+ realSize +";"+ gifSize +"\n");
@@ -210,47 +213,5 @@ public class TP3 {
 		}
 		br.close();
 	}
-	
-	
-	public void convertMediaToGIF(String m1, String output, int fps, String scale) throws IOException, InterruptedException {
-		
-		Runtime run = Runtime.getRuntime();
-		//Process p = run.exec("ffmpeg -i "+ m1 +" " + output );
-		
-		//version normale basse qualité
-		Process p = run.exec("ffmpeg -y -i "+ m1 +" -pix_fmt rgb24 -r "+ fps +" -s "+scale+" -f gif " + output);
 
-		/* Version haute qualité avec gestion d'une palette
-		 * Trop couteuse en temps
-		//String command = "ffmpeg -v warning -i "+m1+" -vf fps="+fps+",scale="+scale+":-1:flags=lanczos,palettegen=stats_mode=diff -y video/palette.png";
-		String command = "ffmpeg -y -ss 1 -i "+m1+" -vf fps=1,scale=160:-1:flags=lanczos,palettegen video/palette.png";
-		System.out.println("palette.png -> " + command);
-		Process p = run.exec(command);
-		p.waitFor();
-		//command = "ffmpeg -i "+m1+" -i video/palette.png -lavfi fps="+fps+",scale="+scale+":-1:flags=lanczos,paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle -y " + output;
-		command = "ffmpeg -y -ss 1 -i "+m1+" -i video/palette.png -filter_complex fps=1,scale=160:-1:flags=lanczos[x];[x][1:v]paletteuse " + output;
-		System.out.println("GIF -> " + command);
-		p = run.exec(command);
-		*/		
-		
-		p.waitFor();
-	}
-	
-	
-	public void concatenerMedia(List<String> listeMedia , String output) throws IOException, InterruptedException {
-		
-		// S'assurer que toutes les videos sont au format mepg4
-		// ffmpeg -y -i v102.mp4 -acodec copy v102a.mp4
-		// sinon pas de son et video bancale
-		
-		Runtime run = Runtime.getRuntime();
-		
-		BufferedWriter bw = new BufferedWriter(new FileWriter("maList.txt"));
-		for (String path:listeMedia) {
-			bw.write("file \'" + path  + "\'\n");
-		}
-		bw.close();
-		Process p = run.exec("ffmpeg -y -f concat -i maList.txt -c copy " + output);
-		p.waitFor();
-	}
 }

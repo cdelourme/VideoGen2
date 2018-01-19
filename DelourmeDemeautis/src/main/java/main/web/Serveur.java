@@ -41,7 +41,6 @@ public class Serveur {
 	}
 
 	@RequestMapping(value = "/generateVOD", method = RequestMethod.POST)
-	//@RequestMapping("/generateVOD")
 	public @ResponseBody String ReceptionPlaylist(@RequestBody List<String> requestedListe) {
 		String returnString = "yourVideo.mp4";
 		System.out.println("A VOD is requested with these videos ....");

@@ -44,6 +44,7 @@ public class TP4 {
 		return nb;
 	}
 	
+	
 	public int nbVariantesFichier( File f) {
 		int nb = 0;
 		try {
@@ -60,10 +61,11 @@ public class TP4 {
 		return nb-1; // on retire les entetes
 	}
 	
+	
 	@Test
 	public void testNombreLignes() {
 		
-		VideoGeneratorModel videoGen = new VideoGenHelper().loadVideoGenerator(URI.createURI("samples/example1.videogen"));
+		VideoGeneratorModel videoGen = new VideoGenHelper().loadVideoGenerator(URI.createURI("samples/etude.videogen"));
 		assertNotNull(videoGen);
 		System.out.println( "Nb variantes : " + nbVariantes(videoGen) );
 		System.out.println("Nb lignes du fichier : " + nbVariantesFichier(new File(filename)));
